@@ -1,29 +1,48 @@
+# Global make targets
+
 .PHONY: all
 all: allexe alldata
+
+.PHONY: clean
+clean:
+	rm build/* || true
+	rm data/allNonograms || true
+	rm data/allHints || true
+	rm data/uniqueHints || true
+	rm data/numUniqueHints || true
+	rm exe/* || true
+
+# Executable make targets
 
 .PHONY: allexe
 allexe: exe/allNonograms exe/makeHints
 
-.PHONY: alldata
-alldata: data/allNonograms data/allHints data/numUniqueHints
-
 .PHONY: exedirs
-exedirs:
-	@mkdir build 2>/dev/null || true
-	@mkdir exe 2>/dev/null || true
+exedirs: build exe
 
-ghc_command := ghc -i"src" -outputdir build -Wno-tabs -O
+build:
+	mkdir build
 
-exe/allNonograms: src/allNonograms.hs src/Nonogram.hs exedirs
+exe:
+	mkdir exe
+
+ghc_command = ghc -i"src" -outputdir build -Wno-tabs -O
+
+exe/allNonograms: src/allNonograms.hs src/Nonogram.hs | exedirs
 	$(ghc_command) src/allNonograms.hs -o exe/allNonograms
 
-exe/makeHints: src/makeHints.hs src/Nonogram.hs exedirs
+exe/makeHints: src/makeHints.hs src/Nonogram.hs | exedirs
 	$(ghc_command) src/makeHints.hs -o exe/makeHints
 
-data/allNonograms: exe/allNonograms data/size
+# Data make targets
+
+.PHONY: alldata
+alldata: data/allNonograms data/allHints data/uniqueHints data/numUniqueHints
+
+data/allNonograms: data/size | exe/allNonograms
 	exe/allNonograms < data/size > data/allNonograms
 
-data/allHints: exe/makeHints data/allNonograms
+data/allHints: data/allNonograms | exe/makeHints
 	exe/makeHints < data/allNonograms > data/allHints
 
 data/uniqueHints: data/allHints
@@ -31,11 +50,3 @@ data/uniqueHints: data/allHints
 
 data/numUniqueHints: data/uniqueHints
 	wc -l < data/uniqueHints > data/numUniqueHints
-
-.PHONY: clean
-clean:
-	rm build/* || true
-	rm data/allHints || true
-	rm data/allNonograms || true
-	rm data/numUniqueHints || true
-	rm exe/* || true
