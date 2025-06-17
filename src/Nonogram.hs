@@ -1,34 +1,27 @@
 module Nonogram
-	( Row(..)
-	, Nonogram(..)
-	, getVals
-	, fromVals
-	, renderNonogram
-	, parseNonogram
+	( Grid(..)
+	, getCols
+	, renderGrid
+	, parseGrid
 	, Hints(..)
 	)
 where
 
-newtype Row x =
-	Row { fromRow :: [x] }
+import Data.List (transpose)
+
+newtype Grid x =
+	Grid { getRows :: [[x]] }
 	deriving (Eq, Ord)
 
-newtype Nonogram x =
-	Nonogram { getRows :: [Row x] }
-	deriving (Eq, Ord)
+getCols :: Grid x -> [[x]]
+getCols = transpose . getRows
 
-getVals :: Nonogram x -> [[x]]
-getVals = fmap fromRow . getRows
+renderGrid :: Show x => Grid x -> String
+renderGrid = show . getRows
 
-fromVals :: [[x]] -> Nonogram x
-fromVals = Nonogram . fmap Row
-
-renderNonogram :: Show x => Nonogram x -> String
-renderNonogram = show . getVals
-
-parseNonogram :: Read x => String -> Nonogram x
-parseNonogram = fromVals . read
+parseGrid :: Read x => String -> Grid x
+parseGrid = Grid . read
 
 data Hints =
-	Hints { rows :: [[Int]], cols :: [[Int]] }
+	Hints { rowHints :: [[Int]], colHints :: [[Int]] }
 	deriving (Eq, Ord, Show, Read)

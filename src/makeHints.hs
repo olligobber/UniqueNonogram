@@ -1,19 +1,18 @@
--- Given a nonogram on each line, output its hints on each line
+-- Given a grid on each line, output its hints on each line
 
-import Data.List (group, transpose)
-import Nonogram (Nonogram(..), getVals, parseNonogram, Hints(..))
+import Data.List (group)
+import Nonogram (Grid(..), getCols, parseGrid, Hints(..))
 
-hintRow :: [Bool] -> [Int]
-hintRow = fmap length . filter head . group
+hintOne :: [Bool] -> [Int]
+hintOne = fmap length . filter head . group
 
-hintRows :: [[Bool]] -> [[Int]]
-hintRows = fmap hintRow
+hintAll :: [[Bool]] -> [[Int]]
+hintAll = fmap hintOne
 
-hintNonogram :: Nonogram Bool -> Hints
-hintNonogram nonogram = Hints { rows, cols } where
-	listrep = getVals nonogram
-	rows = hintRows listrep
-	cols = hintRows $ transpose listrep
+hintGrid :: Grid Bool -> Hints
+hintGrid grid = Hints { rowHints, colHints } where
+	rowHints = hintAll $ getRows grid
+	colHints = hintAll $ getCols grid
 
 main :: IO ()
-main = interact $ unlines . fmap (show . hintNonogram . parseNonogram) . lines
+main = interact $ unlines . fmap (show . hintGrid . parseGrid) . lines

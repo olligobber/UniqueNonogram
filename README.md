@@ -22,7 +22,7 @@ The makefile has a target `alldata` which makes all of the data files. These dep
 
 A list of all data files follows:
 * `data/size`: This file contains the side length of the nonogram square. It is not generated, and is used as the starting point for generating all further data.
-* `data/allNonograms`: This file contains every possible grid.
+* `data/allGrids`: This file contains every possible grid.
 * `data/allHints`: This file contains the corresponding hints for each grid in `data/allNonograms`. That is, line n of `data/allNonograms` would have hints on line n of `data/allHints`.
 * `data/uniqueHints`: This file contains only those hints that have a unique grid, in no particular order.
 * `data/numUniqueHints`: This file contains the number of hints that have a unique grid.
@@ -34,7 +34,7 @@ The data is generated with a mixture of bash and haskell code. Bash code is cont
 The makefile has a target `allexe`. which compiles all of the haskell executables.
 
 A list of haskell executables follows:
-* `exe/allNonograms`: This is used to generate `data/allNonograms`.
+* `exe/allGrids`: This is used to generate `data/allGrids`.
 * `exe/makeHints`: This is used to generate `data/allHints`.
 
 ## Haskell Source Code
@@ -45,5 +45,5 @@ Haskell is used because it makes the code easier to read and write, though it is
 
 A list of haskell source files follows:
 * `src/Nonogram.hs`: This contains general definitions of nonogram grids and hints. This includes basic operations for conversion, extracting data, and writing and reading to files or the terminal.
-* `src/allNonograms.hs`: This is the source for `exe/allNonograms`. Thanks to lazy evaluation, the list of all grids it generates never has to be entirely stored in memory, as the tail of the list is generated as needed, and the head of the list can be discarded once printed.
+* `src/allGrids.hs`: This is the source for `exe/allGrids`. Thanks to lazy evaluation, the list of all grids it generates never has to be entirely stored in memory, as the tail of the list is generated as needed, and the head of the list can be discarded once printed.
 * `src/makeHints.hs`: This is the source for `exe/makeHints`. It contains a function to turn a grid into its hints, which is then applied to each line using `lines` and `unlines`, and then applied to standard input and output using `interact`. Using `lines`, `unlines`, and `interact` in this way means each line is computed independently, and so memory use is minimised.
