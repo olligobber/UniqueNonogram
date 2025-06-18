@@ -51,7 +51,13 @@ data/fullclean: $(foreach dir,$(wildcard data/*),$(dir)/fullclean)
 	-rmdir data
 
 .PHONY: data/%/all
-data/%/all: data/%/size data/%/allGrids data/%/allHints data/%/uniqueHints data/%/numUniqueHints
+data/%/all: \
+	data/%/size \
+	data/%/allGrids \
+	data/%/allHints \
+	data/%/uniqueHints \
+	data/%/numUniqueHints
+
 	@true
 
 .PHONY: data/%/clean
@@ -65,13 +71,13 @@ data/%/fullclean: data/%/clean
 .NOTINTERMEDIATE: data/%/size
 data/%/size:
 	mkdir -p $(@D)
-	if [ $$(grep -c "data/[1-9][0-9]*/size"<<< "$@") -eq 1 ]; \
+	$(eval size = $(subst data/,,$(subst /size,,$@)))
+	@if [ $$(grep -c "[1-9][0-9]*"<<< "$(size)") -eq 0 ]; \
 	then \
-		echo $(subst data/,,$(subst /size,,$@)) > $@; \
-	else \
-		echo "Cannot automatically determine size as directory is not a number"; \
+		echo "Cannot automatically determine size, as directory is not a number"; \
 		false; \
 	fi;
+	echo "$(size)" > $@;
 
 .NOTINTERMEDIATE: data/%/allGrids
 data/%/allGrids: data/%/size | exe/allGrids
