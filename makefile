@@ -8,6 +8,9 @@ all: exe/all data/all
 .PHONY: clean
 clean: exe/clean data/clean
 
+.PHONY: fullclean
+fullclean: exe/fullclean data/fullclean
+
 # Executable make targets
 
 .PHONY: exe/all
@@ -15,24 +18,24 @@ exe/all: exe/allGrids exe/makeHints
 
 .PHONY: exe/clean
 exe/clean:
-	rm build/*
-	rm exe/*
+	-rm build/*
+	-rm exe/*
 
-.PHONY: exedirs
-exedirs: | build exe
-
-build:
-	mkdir build || true
-
-exe:
-	mkdir exe || true
+.PHONY: exe/fullclean
+exe/fullclean: exe/clean
+	-rmdir build
+	-rmdir exe
 
 ghc_command = ghc -i"src" -outputdir build -Wno-tabs -O
 
-exe/allGrids: src/allGrids.hs src/Nonogram.hs | exedirs
+exe/allGrids: src/allGrids.hs src/Nonogram.hs
+	-mkdir exe
+	-mkdir build
 	$(ghc_command) src/allGrids.hs -o exe/allGrids
 
-exe/makeHints: src/makeHints.hs src/Nonogram.hs | exedirs
+exe/makeHints: src/makeHints.hs src/Nonogram.hs
+	-mkdir exe
+	-mkdir build
 	$(ghc_command) src/makeHints.hs -o exe/makeHints
 
 # Data make targets
@@ -43,23 +46,25 @@ data/all: $(foreach dir,$(wildcard data/*),$(dir)/all)
 .PHONY: data/clean
 data/clean: $(foreach dir,$(wildcard data/*),$(dir)/clean)
 
+.PHONY: data/fullclean
+data/fullclean: $(foreach dir,$(wildcard data/*),$(dir)/fullclean)
+	-rmdir data
+
 .PHONY: data/%/all
 data/%/all: data/%/size data/%/allGrids data/%/allHints data/%/uniqueHints data/%/numUniqueHints
 	@true
 
 .PHONY: data/%/clean
 data/%/clean:
-	rm $(@D)/*
+	-rm $(@D)/*
 
-data:
-	mkdir data || true
-
-.NOTINTERMEDIATE: data/%/
-data/%/: | data
-	mkdir $@ || true
+.PHONY: data/%/fullclean
+data/%/fullclean: data/%/clean
+	-rmdir $(@D)
 
 .NOTINTERMEDIATE: data/%/size
-data/%/size: | data/%/
+data/%/size:
+	mkdir -p $(@D)
 	if [ $$(grep -c "data/[1-9][0-9]*/size"<<< "$@") -eq 1 ]; \
 	then \
 		echo $(subst data/,,$(subst /size,,$@)) > $@; \

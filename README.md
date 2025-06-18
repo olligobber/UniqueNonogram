@@ -12,6 +12,8 @@ Run `make` to build all of the executables and compute all of the data. If you o
 
 Run `make clean` to delete all of the executables, data, and temporary files created in the build process, though the subdirectories of `data` will not be removed, so `make all` or `make data/all` will make their data again. To only delete the executables and temporary build files, you can run `make exe/clean`. To only delete data, you can run `make data/clean`, or to only remove data for a size n you can run `make data/<n>/clean`. Similar to `make clean`, this won't remove the actual subdirectories of `data`.
 
+Every `clean` make target has a matching `fullclean` target that removes the directories as well.
+
 ## Data
 
 Because the number of 5x5 nonograms is very large, it is hard to fit into memory, so intermediate data is stored on disk. This also allows prevents recalculation of earlier steps when later steps are being changed. The `data` directory stores all of this data.
