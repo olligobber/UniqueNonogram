@@ -8,24 +8,24 @@ Dependencies are kept minimal. Common bash utilities such as `make`, `sort`, `un
 
 ## Building
 
-Run `make` to build all of the executables and compute all of the data. If you only want to build the executables, run `make exe/all`. If you want to compute the data, run `make data/all`, though some steps in data generation do depend on the executables. Run `make clean` to delete all of the executables, data, and temporary files created in the build process.
+Run `make` to build all of the executables and compute all of the data. If you only want to build the executables, run `make exe/all`. If you want to compute the data, run `make data/all`, though some steps in data generation do depend on the executables. Run `make clean` to delete all of the executables, data, and temporary files created in the build process, though the subdirectories of `data` will not be removed, so `make all` or `make data/all` will make their data again.
 
-If you only want to compute certain data files, you can run `make data/<filename>` to only generate that data file, as well as any data files or executables needed to generate it.
+If you only want to compute data files for certain numbers, you can run `make data/<n>/all` to make data for a size n, and if you want to compute only certain data for a size n, you can run `make data/<n>/<filename>` to only generate that data file, as well as any data files or executables needed to generate it.
 
 ## Data
 
 Because the number of 5x5 nonograms is very large, it is hard to fit into memory, so intermediate data is stored on disk. This also allows prevents recalculation of earlier steps when later steps are being changed. The `data` directory stores all of this data.
 
-`data/size` is different from the other data files, as it is not computer generated. This is the input file, and it contains a single number: the side length of the nonogram square.
+The `data` directory only contains subdirectories representing different data sets. For example, `data/5` would contain data about 5x5 nonograms, while `data/4` would contain data about 4x4 nonograms. Currently, all of these directories must be named after a number.
 
-The makefile has a target `data/all` which makes all of the data files. These depend on the executables, though they are set to not be recomputed if their executable changes, as the data should not become out of date even if the code that generated it changes. In practicular, if a library is refactored to make the code nicer, the generated data files should be the same regardless, so they are not regenerated.
+The makefile has a target `data/all` which makes `data/<n>/all` for every directory in `data`. The target `data/<n>/all` makes all of the data files for size n. These depend on the executables, though they are set to not be recomputed if their executable changes, as the data should not become out of date even if the code that generated it changes. In practicular, if a library is refactored to make the code nicer, the generated data files should be the same regardless, so they are not regenerated.
 
 A list of all data files follows:
-* `data/size`: This file contains the side length of the nonogram square. It is not generated, and is used as the starting point for generating all further data.
-* `data/allGrids`: This file contains every possible grid.
-* `data/allHints`: This file contains the corresponding hints for each grid in `data/allNonograms`. That is, line n of `data/allNonograms` would have hints on line n of `data/allHints`.
-* `data/uniqueHints`: This file contains only those hints that have a unique grid, in no particular order.
-* `data/numUniqueHints`: This file contains the number of hints that have a unique grid.
+* `data/<n>/size`: This file contains the side length of the nonogram square. It is generated from the directory name.
+* `data/<n>/allGrids`: This file contains every possible grid.
+* `data/<n>/allHints`: This file contains the corresponding hints for each grid in `data/allNonograms`. That is, line k of `data/allNonograms` would have hints on line k of `data/allHints`.
+* `data/<n>/uniqueHints`: This file contains only those hints that have a unique grid, in no particular order.
+* `data/<n>/numUniqueHints`: This file contains the number of hints that have a unique grid.
 
 ## Executables
 
@@ -34,8 +34,8 @@ The data is generated with a mixture of bash and haskell code. Bash code is cont
 The makefile has a target `exe/all`. which compiles all of the haskell executables.
 
 A list of haskell executables follows:
-* `exe/allGrids`: This is used to generate `data/allGrids`.
-* `exe/makeHints`: This is used to generate `data/allHints`.
+* `exe/allGrids`: This is used to generate `data/<n>/allGrids`.
+* `exe/makeHints`: This is used to generate `data/<n>/allHints`.
 
 ## Haskell Source Code
 

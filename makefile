@@ -1,3 +1,5 @@
+# SHELL := /bin/bash
+
 # Global make targets
 
 .PHONY: all
@@ -6,10 +8,7 @@ all: exe/all data/all
 .PHONY: clean
 clean:
 	rm build/* || true
-	rm data/allGrids || true
-	rm data/allHints || true
-	rm data/uniqueHints || true
-	rm data/numUniqueHints || true
+	rm data/*/* || true
 	rm exe/* || true
 
 # Executable make targets
@@ -21,10 +20,10 @@ exe/all: exe/allGrids exe/makeHints
 exedirs: | build exe
 
 build:
-	mkdir build
+	mkdir build || true
 
 exe:
-	mkdir exe
+	mkdir exe || true
 
 ghc_command = ghc -i"src" -outputdir build -Wno-tabs -O
 
@@ -37,16 +36,44 @@ exe/makeHints: src/makeHints.hs src/Nonogram.hs | exedirs
 # Data make targets
 
 .PHONY: data/all
-data/all: data/allGrids data/allHints data/uniqueHints data/numUniqueHints
+data/all: $(foreach dir,$(wildcard data/*),$(dir)/all)
 
-data/allGrids: data/size | exe/allGrids
-	exe/allGrids < data/size > data/allGrids
+data:
+	mkdir data || true
 
-data/allHints: data/allGrids | exe/makeHints
-	exe/makeHints < data/allGrids > data/allHints
+.NOTINTERMEDIATE: data/%/
+data/%/: | data
+	mkdir $@ || true
 
-data/uniqueHints: data/allHints
-	sort < data/allHints | uniq -u > data/uniqueHints
+.PHONY: data/%/all
+data/%/all: data/%/size data/%/allGrids data/%/allHints data/%/uniqueHints data/%/numUniqueHints
+	@true
 
-data/numUniqueHints: data/uniqueHints
-	wc -l < data/uniqueHints > data/numUniqueHints
+.NOTINTERMEDIATE: data/%/size
+data/%/size: | data/%/
+	if [ -f $@ ]; \
+	then \
+		true; \
+	elif [ $$(grep -c "data/[1-9][0-9]*/size"<<< "$@") -eq 1 ]; \
+	then \
+		echo $(subst data/,,$(subst /size,,$@)) > $@; \
+	else \
+		echo "Cannot automatically determine size as directory is not a number"; \
+		false; \
+	fi;
+
+.NOTINTERMEDIATE: data/%/allGrids
+data/%/allGrids: data/%/size | exe/allGrids
+	exe/allGrids < $< > $@
+
+.NOTINTERMEDIATE: data/%/allHints
+data/%/allHints: data/%/allGrids | exe/makeHints
+	exe/makeHints < $< > $@
+
+.NOTINTERMEDIATE: data/%/uniqueHints
+data/%/uniqueHints: data/%/allHints
+	sort < $< | uniq -u > $@
+
+.NOTINTERMEDIATE: data/%/numUniqueHints
+data/%/numUniqueHints: data/%/uniqueHints
+	wc -l < $< > $@
