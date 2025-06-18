@@ -1,7 +1,7 @@
 -- Take in the size and output all possible grids
 
 import Control.Monad (replicateM)
-import Nonogram (Grid(..), renderGrid)
+import Nonogram (Grid(..), storeGrid)
 
 allBool :: [Bool]
 allBool = [False, True]
@@ -15,4 +15,4 @@ allGrid size = Grid <$> replicateM size (allRow size)
 main :: IO ()
 main = do
 	size <- readLn
-	mapM_ (putStrLn . renderGrid) $ allGrid size
+	mapM_ (putStrLn . storeGrid) $ allGrid size

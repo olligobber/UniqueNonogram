@@ -1,7 +1,7 @@
 -- Given a grid on each line, output its hints on each line
 
 import Data.List (group)
-import Nonogram (Grid(..), getCols, parseGrid, Hints(..))
+import Nonogram (Grid(..), getCols, parseGrid, Hints(..), storeHints)
 
 hintOne :: [Bool] -> [Int]
 hintOne = fmap length . filter head . group
@@ -15,4 +15,4 @@ hintGrid grid = Hints { rowHints, colHints } where
 	colHints = hintAll $ getCols grid
 
 main :: IO ()
-main = interact $ unlines . fmap (show . hintGrid . parseGrid) . lines
+main = interact $ unlines . fmap (storeHints . hintGrid . parseGrid) . lines
