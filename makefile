@@ -1,7 +1,7 @@
 # Global make targets
 
 .PHONY: all
-all: allexe alldata
+all: exe/all data/all
 
 .PHONY: clean
 clean:
@@ -14,8 +14,8 @@ clean:
 
 # Executable make targets
 
-.PHONY: allexe
-allexe: exe/allGrids exe/makeHints
+.PHONY: exe/all
+exe/all: exe/allGrids exe/makeHints
 
 .PHONY: exedirs
 exedirs: | build exe
@@ -28,16 +28,16 @@ exe:
 
 ghc_command = ghc -i"src" -outputdir build -Wno-tabs -O
 
-exe/allGrids: src/allGrids.hs src/Nonogram.hs exedirs
+exe/allGrids: src/allGrids.hs src/Nonogram.hs | exedirs
 	$(ghc_command) src/allGrids.hs -o exe/allGrids
 
-exe/makeHints: src/makeHints.hs src/Nonogram.hs exedirs
+exe/makeHints: src/makeHints.hs src/Nonogram.hs | exedirs
 	$(ghc_command) src/makeHints.hs -o exe/makeHints
 
 # Data make targets
 
-.PHONY: alldata
-alldata: data/allGrids data/allHints data/uniqueHints data/numUniqueHints
+.PHONY: data/all
+data/all: data/allGrids data/allHints data/uniqueHints data/numUniqueHints
 
 data/allGrids: data/size | exe/allGrids
 	exe/allGrids < data/size > data/allGrids
