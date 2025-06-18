@@ -8,9 +8,9 @@ Dependencies are kept minimal. Common bash utilities such as `make`, `sort`, `un
 
 ## Building
 
-Run `make` to build all of the executables and compute all of the data. If you only want to build the executables, run `make exe/all`. If you want to compute the data, run `make data/all`, though some steps in data generation do depend on the executables. Run `make clean` to delete all of the executables, data, and temporary files created in the build process, though the subdirectories of `data` will not be removed, so `make all` or `make data/all` will make their data again.
+Run `make` to build all of the executables and compute all of the data. If you only want to build the executables, run `make exe/all`. If you want to compute the data, run `make data/all`, though some steps in data generation do depend on the executables. If you only want to compute data files for certain numbers, you can run `make data/<n>/all` to make data for a size n, and if you want to compute only certain data for a size n, you can run `make data/<n>/<filename>` to only generate that data file, as well as any data files or executables needed to generate it.
 
-If you only want to compute data files for certain numbers, you can run `make data/<n>/all` to make data for a size n, and if you want to compute only certain data for a size n, you can run `make data/<n>/<filename>` to only generate that data file, as well as any data files or executables needed to generate it.
+Run `make clean` to delete all of the executables, data, and temporary files created in the build process, though the subdirectories of `data` will not be removed, so `make all` or `make data/all` will make their data again. To only delete the executables and temporary build files, you can run `make exe/clean`. To only delete data, you can run `make data/clean`, or to only remove data for a size n you can run `make data/<n>/clean`. Similar to `make clean`, this won't remove the actual subdirectories of `data`.
 
 ## Data
 

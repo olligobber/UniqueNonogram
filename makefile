@@ -6,15 +6,17 @@
 all: exe/all data/all
 
 .PHONY: clean
-clean:
-	rm build/* || true
-	rm data/*/* || true
-	rm exe/* || true
+clean: exe/clean data/clean
 
 # Executable make targets
 
 .PHONY: exe/all
 exe/all: exe/allGrids exe/makeHints
+
+.PHONY: exe/clean
+exe/clean:
+	rm build/*
+	rm exe/*
 
 .PHONY: exedirs
 exedirs: | build exe
@@ -38,6 +40,17 @@ exe/makeHints: src/makeHints.hs src/Nonogram.hs | exedirs
 .PHONY: data/all
 data/all: $(foreach dir,$(wildcard data/*),$(dir)/all)
 
+.PHONY: data/clean
+data/clean: $(foreach dir,$(wildcard data/*),$(dir)/clean)
+
+.PHONY: data/%/all
+data/%/all: data/%/size data/%/allGrids data/%/allHints data/%/uniqueHints data/%/numUniqueHints
+	@true
+
+.PHONY: data/%/clean
+data/%/clean:
+	rm $(@D)/*
+
 data:
 	mkdir data || true
 
@@ -45,16 +58,9 @@ data:
 data/%/: | data
 	mkdir $@ || true
 
-.PHONY: data/%/all
-data/%/all: data/%/size data/%/allGrids data/%/allHints data/%/uniqueHints data/%/numUniqueHints
-	@true
-
 .NOTINTERMEDIATE: data/%/size
 data/%/size: | data/%/
-	if [ -f $@ ]; \
-	then \
-		true; \
-	elif [ $$(grep -c "data/[1-9][0-9]*/size"<<< "$@") -eq 1 ]; \
+	if [ $$(grep -c "data/[1-9][0-9]*/size"<<< "$@") -eq 1 ]; \
 	then \
 		echo $(subst data/,,$(subst /size,,$@)) > $@; \
 	else \
