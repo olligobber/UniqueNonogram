@@ -8,7 +8,7 @@ Dependencies are kept minimal. Common bash utilities such as `make`, `sort`, `un
 
 ## Building
 
-Run `make` to build all of the executables and compute all of the data. If you only want to build the executables, run `make allexe`. If you want to compute the data, run `make alldata`, though some steps in data generation do depend on the executables. Run `make clean` to delete all of the executables, data, and temporary files created in the build process.
+Run `make` to build all of the executables and compute all of the data. If you only want to build the executables, run `make exe/all`. If you want to compute the data, run `make data/all`, though some steps in data generation do depend on the executables. Run `make clean` to delete all of the executables, data, and temporary files created in the build process.
 
 If you only want to compute certain data files, you can run `make data/<filename>` to only generate that data file, as well as any data files or executables needed to generate it.
 
@@ -18,7 +18,7 @@ Because the number of 5x5 nonograms is very large, it is hard to fit into memory
 
 `data/size` is different from the other data files, as it is not computer generated. This is the input file, and it contains a single number: the side length of the nonogram square.
 
-The makefile has a target `alldata` which makes all of the data files. These depend on the executables, though they are set to not be recomputed if their executable changes, as the data should not become out of date even if the code that generated it changes. In practicular, if a library is refactored to make the code nicer, the generated data files should be the same regardless, so they are not regenerated.
+The makefile has a target `data/all` which makes all of the data files. These depend on the executables, though they are set to not be recomputed if their executable changes, as the data should not become out of date even if the code that generated it changes. In practicular, if a library is refactored to make the code nicer, the generated data files should be the same regardless, so they are not regenerated.
 
 A list of all data files follows:
 * `data/size`: This file contains the side length of the nonogram square. It is not generated, and is used as the starting point for generating all further data.
@@ -31,7 +31,7 @@ A list of all data files follows:
 
 The data is generated with a mixture of bash and haskell code. Bash code is contained in the makefile, and haskell code is contained in the `src` directory. Haskell code must be compiled before it is run, and the compiled executables are placed in the `exe` directory. Any helper files created during compilation are placed in the `build` directory, and may be reused if multiple haskell files rely on the same library. If the `exe` and `build` directories do not exist, they will be created.
 
-The makefile has a target `allexe`. which compiles all of the haskell executables.
+The makefile has a target `exe/all`. which compiles all of the haskell executables.
 
 A list of haskell executables follows:
 * `exe/allGrids`: This is used to generate `data/allGrids`.
