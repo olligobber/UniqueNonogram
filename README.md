@@ -1,6 +1,6 @@
-# SolvableNonogram
+# UniqueNonogram
 
-The purpose of this project is to find nonograms with unique solutions that aren't solvable with certain solving logic. This was inspired by [Pixelogic's "Every 5x5 Nonogram"](https://pixelogic.app/every-5x5-nonogram), which tries to get all 24976511 solvable 5x5 nonograms solved by a human. However, looking at [OEIS sequence A242876](https://oeis.org/A242876), the number of 5x5 nonograms with a unique solution is 25309575. The difference of 333064 seems to be accounted for by which nonograms the Pixelogic team consider "solvable". This project attempts to find these "unsolvable" nonograms.
+The purpose of this project is to count nonograms with unique solutions. This was inspired by [Pixelogic's "Every 5x5 Nonogram"](https://pixelogic.app/every-5x5-nonogram), which tries to get all 24976511 solvable 5x5 nonograms solved by a human. However, looking at [OEIS sequence A242876](https://oeis.org/A242876), the number of 5x5 nonograms with a unique solution is 25309575. The goal of this project is to compute terms in this sequence and related ones.
 
 ## Dependencies
 
